@@ -1,6 +1,10 @@
 # mini awg
 
-## test
+## Overview
+
+![overview](figures/overview.png)
+
+## Test
 
 ```
 cd tb
