@@ -1,6 +1,6 @@
-# mini AWG
+# mAWG
 
-This mini AWG generates waveform by reading data from Wave Pattern Storage according to Chunk Storage entries.
+This mini AWG `mAWG` generates waveform by reading data from Wave Pattern Storage according to Chunk Storage entries.
 
 ## Overview
 
@@ -26,7 +26,6 @@ and `repetition` gives the number of repetitions of reading the sequence of chun
 | WAVE\_DEPTH      | depth of wave pattern storage        |
 | WAVE\_WIDTH      | bit-width of wave pattern            |
 | WAVE\_RAM\_DELAY | read latency of wave pattern storage |
-
 
 ## Test
 
