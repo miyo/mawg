@@ -13,8 +13,9 @@ module mawg#(parameter CTRL_DEPTH=4,
 
      input wire kick,
      output wire busy,
+     input wire force_stop,
      input wire [15:0] repetition,
-     input wire [2**CTRL_DEPTH-1:0] ctrl_length,
+     input wire [CTRL_DEPTH-1:0] ctrl_length,
 
      output wire [WAVE_DEPTH-1:0] wave_addr,
      input wire [WAVE_WIDTH-1:0] wave_data,
@@ -38,8 +39,8 @@ module mawg#(parameter CTRL_DEPTH=4,
               );
 
     reg [15:0] repetition_r;
-    reg [15:0] ctrl_length_r;
-    reg [15:0] ctrl_count;
+    reg [CTRL_DEPTH-1:0] ctrl_length_r;
+    reg [CTRL_DEPTH-1:0] ctrl_count;
     reg busy_r;
     reg wave_valid_r;
 
@@ -75,7 +76,7 @@ module mawg#(parameter CTRL_DEPTH=4,
         end else begin
             case(state) 
                 IDLE: begin
-                    if(kick == 1 && repetition > 0) begin
+                    if(kick == 1 && repetition > 0 && force_stop == 0) begin
                         state <= PREP;
                         repetition_r <= repetition;
                         ctrl_length_r <= ctrl_length;
@@ -109,7 +110,10 @@ module mawg#(parameter CTRL_DEPTH=4,
                     state <= RUN;
                 end
                 RUN: begin
-                    if(wave_count <= 1) begin
+		    if(force_stop == 1) begin
+                        state <= IDLE;
+                        wave_valid_r <= 0;
+		    end else if(wave_count <= 1) begin
                         if(wave_repetition <= 1) begin
                             wave_offset <= ctrl_rdata[WAVE_DEPTH-1:0];
                             wave_length <= ctrl_rdata[WAVE_DEPTH+WAVE_DEPTH-1:WAVE_DEPTH];

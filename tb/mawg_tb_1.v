@@ -13,8 +13,9 @@ module mawg_tb_1;
     reg ctrl_we;
     reg kick;
     wire busy;
+    reg force_stop;
     reg [15:0] repetition;
-    reg [2**CTRL_DEPTH-1:0] ctrl_length;
+    reg [CTRL_DEPTH-1:0] ctrl_length;
     wire [WAVE_DEPTH-1:0] wave_addr;
     wire [WAVE_WIDTH-1:0] wave_data;
     wire wave_valid;
@@ -29,6 +30,7 @@ module mawg_tb_1;
         .ctrl_we(ctrl_we),
         .kick(kick),
         .busy(busy),
+        .force_stop(force_stop),
         .repetition(repetition),
         .ctrl_length(ctrl_length),
         .wave_addr(wave_addr),
@@ -60,6 +62,7 @@ module mawg_tb_1;
         ctrl_data = 0;
         ctrl_we = 0;
         kick = 0;
+        force_stop = 0;
         repetition = 0;
         ctrl_length = 0;
         counter = 0;
@@ -99,7 +102,7 @@ module mawg_tb_1;
             102: begin
                 kick <= 1'b1;
                 repetition <= 16'd1;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             103: begin
@@ -124,7 +127,7 @@ module mawg_tb_1;
             202: begin
                 kick <= 1'b1;
                 repetition <= 16'd1;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             203: begin
@@ -149,7 +152,7 @@ module mawg_tb_1;
             302: begin
                 kick <= 1'b1;
                 repetition <= 16'd1;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             303: begin
@@ -174,7 +177,7 @@ module mawg_tb_1;
             402: begin
                 kick <= 1'b1;
                 repetition <= 16'd1;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             403: begin
@@ -199,7 +202,7 @@ module mawg_tb_1;
             502: begin
                 kick <= 1'b1;
                 repetition <= 16'd2;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             503: begin
@@ -224,7 +227,7 @@ module mawg_tb_1;
             602: begin
                 kick <= 1'b1;
                 repetition <= 16'd2;
-                ctrl_length <= 16'd1;
+                ctrl_length <= 1;
                 counter <= counter + 1;
             end
             603: begin
@@ -255,7 +258,7 @@ module mawg_tb_1;
             703: begin
                 kick <= 1'b1;
                 repetition <= 16'd2;
-                ctrl_length <= 16'd2;
+                ctrl_length <= 2;
                 counter <= counter + 1;
             end
             704: begin
