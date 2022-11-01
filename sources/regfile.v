@@ -11,10 +11,11 @@ module regfile#(parameter DEPTH=8, parameter WIDTH=16)
      output wire [WIDTH-1:0] rdata
      );
 
-    reg [WIDTH-1:0] mem [2**DEPTH-1:0];
+    localparam SIZE = 2**DEPTH;
+
+    reg [WIDTH-1:0] mem [SIZE-1:0];
 
     integer i;
-    integer SIZE = 2**DEPTH;
     always @(posedge clk) begin
 	if(reset == 1) begin
 	    for(i = 0; i < SIZE; i=i+1) begin
