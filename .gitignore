@@ -3,3 +3,7 @@ a.out
 *.vcd
 *_out.txt
 obj_dir
+*.jou
+*.log
+*.str
+.Xil
