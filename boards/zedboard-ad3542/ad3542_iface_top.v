@@ -28,6 +28,8 @@ module ad5342_iface_top
       
    input wire[7:0] SW,
    output wire[7:0] LD,
+
+   output wire [7:0] JA,
   
    output wire spi_sclk_0, // MAX 66MHz
    output wire spi_cs_0,
@@ -93,29 +95,29 @@ module ad5342_iface_top
 
     reg [15:0] dac_test_val;
 
-    wire [15:0] dac_0_0;
-    wire [15:0] dac_1_0;
+    (* mark_debug = "true" *) wire [15:0] dac_0_0;
+    (* mark_debug = "true" *) wire [15:0] dac_1_0;
+    
+    (* mark_debug = "true" *) wire [15:0] dac_0_1;
+    (* mark_debug = "true" *) wire [15:0] dac_1_1;
 
-    wire [15:0] dac_0_1;
-    wire [15:0] dac_1_1;
+    (* mark_debug = "true" *) wire [15:0] dac_0_2;
+    (* mark_debug = "true" *) wire [15:0] dac_1_2;
 
-    wire [15:0] dac_0_2;
-    wire [15:0] dac_1_2;
+    (* mark_debug = "true" *) wire [15:0] dac_0_3;
+    (* mark_debug = "true" *) wire [15:0] dac_1_3;
 
-    wire [15:0] dac_0_3;
-    wire [15:0] dac_1_3;
+    (* mark_debug = "true" *) wire [15:0] dac_0_4;
+    (* mark_debug = "true" *) wire [15:0] dac_1_4;
 
-    wire [15:0] dac_0_4;
-    wire [15:0] dac_1_4;
+    (* mark_debug = "true" *) wire [15:0] dac_0_5;
+    (* mark_debug = "true" *) wire [15:0] dac_1_5;
 
-    wire [15:0] dac_0_5;
-    wire [15:0] dac_1_5;
+    (* mark_debug = "true" *) wire [15:0] dac_0_6;
+    (* mark_debug = "true" *) wire [15:0] dac_1_6;
 
-    wire [15:0] dac_0_6;
-    wire [15:0] dac_1_6;
-
-    wire [15:0] dac_0_7;
-    wire [15:0] dac_1_7;
+    (* mark_debug = "true" *) wire [15:0] dac_0_7;
+    (* mark_debug = "true" *) wire [15:0] dac_1_7;
 
     reg [7:0] sw_d;
     reg [7:0] sw_dd;
@@ -124,10 +126,10 @@ module ad5342_iface_top
 	sw_dd <= sw_d;
     end
 
-    wire sys_reset;
+    (* mark_debug = "true" *) wire sys_reset;
     assign sys_reset = sw_dd[0];
 
-    wire debug_mode;
+    (* mark_debug = "true" *) wire debug_mode;
     assign debug_mode = sw_dd[1];
     
     wire [2:0] dac_val_mode;
@@ -148,7 +150,7 @@ module ad5342_iface_top
     always @(posedge AD3542_CLK) begin
 	ad3524_clk_counter <= ad3524_clk_counter + 1;
     end
-    assign FMC_LED = ad3524_clk_counter[23:0];
+    assign FMC_LED = ad3524_clk_counter[23];
 
     ad3542_iface ad3542_iface_i_0
       (
@@ -278,465 +280,371 @@ module ad5342_iface_top
        .ad3542_reset_x()
        );
 
-    wire [0:0] mawg_ctrl_addr;
-    wire [10+16+16-1:0] mawg_ctrl_data;
-    wire [3:0] mawg_ctrl_we;
-    wire [9:0] mawg_wave_addr;
-    wire [15:0] mawg_wave_data;
-    wire [3:0] mawg_wave_we;
+    (* mark_debug = "true" *) wire [8:0] mawg_wave_addr;
+    (* mark_debug = "true" *) wire [15:0] mawg_wave_data;
 
-    wire mawg_kick;
-    wire mawg_force_stop;
-    wire [15:0] mawg_repetition;
-    wire [3:0] mawg_ctrl_length;
+    (* mark_debug = "true" *) wire mawg_kick;
+    (* mark_debug = "true" *) wire mawg_force_stop;
+    (* mark_debug = "true" *) wire [8:0] mawg_data_num;
+    (* mark_debug = "true" *) wire [22:0] mawg_repetition;
+    (* mark_debug = "true" *) wire [31:0] mawg_wait_num;
 
-    wire mawg_0_ctrl_we;
-    wire mawg_0_wave_we;
-    wire mawg_0_busy;
-    wire wave_0_valid;
-    wire [15:0] wave_0_out;
+    (* mark_debug = "true" *) wire mawg_0_wave_we;
+    (* mark_debug = "true" *) wire mawg_0_busy;
+    (* mark_debug = "true" *) wire wave_0_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_0_out;
 
-    mawg_unit mawg_0(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_0_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_0_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_0_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_0_valid),
-		     .wave_out(wave_0_out)
-		     );
+    sequencer sequencer_0 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_0_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_0_busy),
+			   .data_out(wave_0_out),
+			   .valid_out(wave_0_valid)
+			   );
 
-    wire mawg_1_ctrl_we;
-    wire mawg_1_wave_we;
-    wire mawg_1_busy;
-    wire wave_1_valid;
-    wire [15:0] wave_1_out;
+    (* mark_debug = "true" *) wire mawg_1_wave_we;
+    (* mark_debug = "true" *) wire mawg_1_busy;
+    (* mark_debug = "true" *) wire wave_1_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_1_out;
     
-    mawg_unit mawg_1(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_1_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_1_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_1_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_1_valid),
-		     .wave_out(wave_1_out)
-		     );
+    sequencer sequencer_1 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_1_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_1_busy),
+			   .data_out(wave_1_out),
+			   .valid_out(wave_1_valid)
+			   );
 
-    wire mawg_2_ctrl_we;
-    wire mawg_2_wave_we;
-    wire mawg_2_busy;
-    wire wave_2_valid;
-    wire [15:0] wave_2_out;
+    (* mark_debug = "true" *) wire mawg_2_wave_we;
+    (* mark_debug = "true" *) wire mawg_2_busy;
+    (* mark_debug = "true" *) wire wave_2_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_2_out;
 
-    mawg_unit mawg_2(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_2_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_2_wave_we),
+    sequencer sequencer_2 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_2_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_2_busy),
+			   .data_out(wave_2_out),
+			   .valid_out(wave_2_valid)
+			   );
 
-		     .kick(mawg_kick),
-		     .busy(mawg_2_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_2_valid),
-		     .wave_out(wave_2_out)
-		     );
+    (* mark_debug = "true" *) wire mawg_3_wave_we;
+    (* mark_debug = "true" *) wire mawg_3_busy;
+    (* mark_debug = "true" *) wire wave_3_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_3_out;
 
-    wire mawg_3_ctrl_we;
-    wire mawg_3_wave_we;
-    wire mawg_3_busy;
-    wire wave_3_valid;
-    wire [15:0] wave_3_out;
+    sequencer sequencer_3 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_3_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_3_busy),
+			   .data_out(wave_3_out),
+			   .valid_out(wave_3_valid)
+			   );
 
-    mawg_unit mawg_3(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_3_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_3_wave_we),
+    (* mark_debug = "true" *) wire mawg_4_wave_we;
+    (* mark_debug = "true" *) wire mawg_4_busy;
+    (* mark_debug = "true" *) wire wave_4_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_4_out;
 
-		     .kick(mawg_kick),
-		     .busy(mawg_3_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_3_valid),
-		     .wave_out(wave_3_out)
-		     );
+    sequencer sequencer_4 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_4_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_4_busy),
+			   .data_out(wave_4_out),
+			   .valid_out(wave_4_valid)
+			   );
 
-    wire mawg_4_ctrl_we;
-    wire mawg_4_wave_we;
-    wire mawg_4_busy;
-    wire wave_4_valid;
-    wire [15:0] wave_4_out;
+    (* mark_debug = "true" *) wire mawg_5_wave_we;
+    (* mark_debug = "true" *) wire mawg_5_busy;
+    (* mark_debug = "true" *) wire wave_5_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_5_out;
 
-    mawg_unit mawg_4(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_4_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_4_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_4_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_4_valid),
-		     .wave_out(wave_4_out)
-		     );
+    sequencer sequencer_5 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_5_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_5_busy),
+			   .data_out(wave_5_out),
+			   .valid_out(wave_5_valid)
+			   );
 
-    wire mawg_5_ctrl_we;
-    wire mawg_5_wave_we;
-    wire mawg_5_busy;
-    wire wave_5_valid;
-    wire [15:0] wave_5_out;
-
-    mawg_unit mawg_5(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_5_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_5_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_5_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_5_valid),
-		     .wave_out(wave_5_out)
-		     );
-
-    wire mawg_6_ctrl_we;
-    wire mawg_6_wave_we;
-    wire mawg_6_busy;
-    wire wave_6_valid;
-    wire [15:0] wave_6_out;
+    (* mark_debug = "true" *) wire mawg_6_wave_we;
+    (* mark_debug = "true" *) wire mawg_6_busy;
+    (* mark_debug = "true" *) wire wave_6_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_6_out;
     
-    mawg_unit mawg_6(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_6_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_6_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_6_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_6_valid),
-		     .wave_out(wave_6_out)
-		     );
+    sequencer sequencer_6 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_6_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_6_busy),
+			   .data_out(wave_6_out),
+			   .valid_out(wave_6_valid)
+			   );
 
-    wire mawg_7_ctrl_we;
-    wire mawg_7_wave_we;
-    wire mawg_7_busy;
-    wire wave_7_valid;
-    wire [15:0] wave_7_out;
+    (* mark_debug = "true" *) wire mawg_7_wave_we;
+    (* mark_debug = "true" *) wire mawg_7_busy;
+    (* mark_debug = "true" *) wire wave_7_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_7_out;
 
-    mawg_unit mawg_7(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_7_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_7_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_7_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_7_valid),
-		     .wave_out(wave_7_out)
-		     );
+    sequencer sequencer_7 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_7_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_7_busy),
+			   .data_out(wave_7_out),
+			   .valid_out(wave_7_valid)
+			   );
 
-    wire mawg_8_ctrl_we;
-    wire mawg_8_wave_we;
-    wire mawg_8_busy;
-    wire wave_8_valid;
-    wire [15:0] wave_8_out;
+    (* mark_debug = "true" *) wire mawg_8_wave_we;
+    (* mark_debug = "true" *) wire mawg_8_busy;
+    (* mark_debug = "true" *) wire wave_8_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_8_out;
 
-    mawg_unit mawg_8(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_8_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_8_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_8_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_8_valid),
-		     .wave_out(wave_8_out)
-		     );
+    sequencer sequencer_8 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_8_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_8_busy),
+			   .data_out(wave_8_out),
+			   .valid_out(wave_8_valid)
+			   );
 
-    wire mawg_9_ctrl_we;
-    wire mawg_9_wave_we;
-    wire mawg_9_busy;
-    wire wave_9_valid;
-    wire [15:0] wave_9_out;
+    (* mark_debug = "true" *) wire mawg_9_wave_we;
+    (* mark_debug = "true" *) wire mawg_9_busy;
+    (* mark_debug = "true" *) wire wave_9_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_9_out;
 
-    mawg_unit mawg_9(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_9_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_9_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_9_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_9_valid),
-		     .wave_out(wave_9_out)
-		     );
+    sequencer sequencer_9 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_9_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_9_busy),
+			   .data_out(wave_9_out),
+			   .valid_out(wave_9_valid)
+			   );
 
-    wire mawg_a_ctrl_we;
-    wire mawg_a_wave_we;
-    wire mawg_a_busy;
-    wire wave_a_valid;
-    wire [15:0] wave_a_out;
+    (* mark_debug = "true" *) wire mawg_a_wave_we;
+    (* mark_debug = "true" *) wire mawg_a_busy;
+    (* mark_debug = "true" *) wire wave_a_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_a_out;
 
-    mawg_unit mawg_a(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_a_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_a_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_a_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_a_valid),
-		     .wave_out(wave_a_out)
-		     );
+    sequencer sequencer_a (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_a_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_a_busy),
+			   .data_out(wave_a_out),
+			   .valid_out(wave_a_valid)
+			   );
 
-    wire mawg_b_ctrl_we;
-    wire mawg_b_wave_we;
-    wire mawg_b_busy;
-    wire wave_b_valid;
-    wire [15:0] wave_b_out;
+    (* mark_debug = "true" *) wire mawg_b_wave_we;
+    (* mark_debug = "true" *) wire mawg_b_busy;
+    (* mark_debug = "true" *) wire wave_b_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_b_out;
 
-    mawg_unit mawg_b(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_b_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_b_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_b_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_b_valid),
-		     .wave_out(wave_b_out)
-		     );
+    sequencer sequencer_b (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_b_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_b_busy),
+			   .data_out(wave_b_out),
+			   .valid_out(wave_b_valid)
+			   );
 
-    wire mawg_c_ctrl_we;
-    wire mawg_c_wave_we;
-    wire mawg_c_busy;
-    wire wave_c_valid;
-    wire [15:0] wave_c_out;
+    (* mark_debug = "true" *) wire mawg_c_wave_we;
+    (* mark_debug = "true" *) wire mawg_c_busy;
+    (* mark_debug = "true" *) wire wave_c_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_c_out;
 
-    mawg_unit mawg_c(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_c_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_c_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_c_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_c_valid),
-		     .wave_out(wave_c_out)
-		     );
+    sequencer sequencer_c (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_c_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_c_busy),
+			   .data_out(wave_c_out),
+			   .valid_out(wave_c_valid)
+			   );
 
-    wire mawg_d_ctrl_we;
-    wire mawg_d_wave_we;
-    wire mawg_d_busy;
-    wire wave_d_valid;
-    wire [15:0] wave_d_out;
+    (* mark_debug = "true" *) wire mawg_d_wave_we;
+    (* mark_debug = "true" *) wire mawg_d_busy;
+    (* mark_debug = "true" *) wire wave_d_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_d_out;
 
-    mawg_unit mawg_d(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_d_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_d_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_d_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_d_valid),
-		     .wave_out(wave_d_out)
-		     );
+    sequencer sequencer_d (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_d_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_d_busy),
+			   .data_out(wave_d_out),
+			   .valid_out(wave_d_valid)
+			   );
 
-    wire mawg_e_ctrl_we;
-    wire mawg_e_wave_we;
-    wire mawg_e_busy;
-    wire wave_e_valid;
-    wire [15:0] wave_e_out;
+    (* mark_debug = "true" *) wire mawg_e_wave_we;
+    (* mark_debug = "true" *) wire mawg_e_busy;
+    (* mark_debug = "true" *) wire wave_e_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_e_out;
 
-    mawg_unit mawg_e(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_e_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_e_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_e_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_e_valid),
-		     .wave_out(wave_e_out)
-		     );
+    sequencer sequencer_e (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_e_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_e_busy),
+			   .data_out(wave_e_out),
+			   .valid_out(wave_e_valid)
+			   );
 
-    wire mawg_f_ctrl_we;
-    wire mawg_f_wave_we;
-    wire mawg_f_busy;
-    wire wave_f_valid;
-    wire [15:0] wave_f_out;
+    (* mark_debug = "true" *) wire mawg_f_wave_we;
+    (* mark_debug = "true" *) wire mawg_f_busy;
+    (* mark_debug = "true" *) wire wave_f_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_f_out;
 
-    mawg_unit mawg_f(
-		     .clk(AD3542_CLK),
-		     .reset(sys_reset),
-		     
-		     .ctrl_addr(mawg_ctrl_addr),
-		     .ctrl_data(mawg_ctrl_data),
-		     .ctrl_we(mawg_f_ctrl_we),
-		     
-		     .wave_we_addr(mawg_wave_addr),
-		     .wave_we_data(mawg_wave_data),
-		     .wave_we(mawg_f_wave_we),
-		     
-		     .kick(mawg_kick),
-		     .busy(mawg_f_busy),
-		     .force_stop(mawg_force_stop),
-		     .repetition(mawg_repetition),
-		     .ctrl_length(mawg_ctrl_length),
-		     
-		     .wave_valid(wave_f_valid),
-		     .wave_out(wave_f_out)
-		     );
+    sequencer sequencer_f (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_f_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_f_busy),
+			   .data_out(wave_f_out),
+			   .valid_out(wave_f_valid)
+			   );
+
+    (* mark_debug = "true" *) wire mawg_10_wave_we;
+    (* mark_debug = "true" *) wire mawg_10_busy;
+    (* mark_debug = "true" *) wire wave_10_valid;
+    (* mark_debug = "true" *) wire [15:0] wave_10_out;
+
+    sequencer sequencer_10 (
+			   .clk(AD3542_CLK),
+			   .reset(sys_reset),
+			   .write_addr(mawg_wave_addr),
+			   .write_data(mawg_wave_data),
+			   .write_en(mawg_10_wave_we),
+			   .data_num(mawg_data_num),
+			   .repetition(mawg_repetition),
+			   .wait_num(mawg_wait_num),
+			   .kick(mawg_kick),
+			   .stop(mawg_force_stop),
+			   .busy(mawg_10_busy),
+			   .data_out(wave_10_out),
+			   .valid_out(wave_10_valid)
+			   );
 
     reg [15:0] wave_0_out_r;
     reg [15:0] wave_1_out_r;
@@ -755,6 +663,8 @@ module ad5342_iface_top
     reg [15:0] wave_e_out_r;
     reg [15:0] wave_f_out_r;
 
+    reg [15:0] wave_10_out_r;
+
     always @(posedge AD3542_CLK) begin
 	if(wave_0_valid) wave_0_out_r <= wave_0_out;
 	if(wave_1_valid) wave_1_out_r <= wave_1_out;
@@ -772,6 +682,8 @@ module ad5342_iface_top
 	if(wave_d_valid) wave_d_out_r <= wave_d_out;
 	if(wave_e_valid) wave_e_out_r <= wave_e_out;
 	if(wave_f_valid) wave_f_out_r <= wave_f_out;
+
+	if(wave_10_valid) wave_10_out_r <= wave_10_out;
     end
 
     assign dac_0_0 = debug_mode == 1'b0 ? wave_0_out_r : dac_test_val;
@@ -790,6 +702,8 @@ module ad5342_iface_top
     assign dac_1_6 = debug_mode == 1'b0 ? wave_d_out_r : dac_test_val;
     assign dac_0_7 = debug_mode == 1'b0 ? wave_e_out_r : dac_test_val;
     assign dac_1_7 = debug_mode == 1'b0 ? wave_f_out_r : dac_test_val;
+
+    assign JA = wave_10_out_r[7:0];
     
     wire FCLK_CLK0_0;
     wire [15:0] bram_addr_a_0;
@@ -803,9 +717,9 @@ module ad5342_iface_top
     wire bram_rst_a_0;
     wire bram_rst_a_1;
     wire [3:0] bram_we_a_0;
-    wire [7:0] bram_we_a_1;
+    wire [3:0] bram_we_a_1;
     wire [31:0] bram_wrdata_a_0;
-    wire [63:0] bram_wrdata_a_1;
+    wire [31:0] bram_wrdata_a_1;
     wire [31:0] gpio2_io_i_0;
     wire [31:0] gpio_io_o_0;
 
@@ -850,15 +764,26 @@ module ad5342_iface_top
 		      .gpio_io_o_0(gpio_io_o_0)
 		      );
 
-    wire [4:0] mawg_ctrl_addr_in;
-    wire [41:0] mawg_ctrl_data_in;
     wire [13:0] mawg_wave_addr_in;
     wire [15:0] mawg_wave_data_in;
 
-    assign mawg_ctrl_addr_in = bram_addr_a_1[10:3];
-    assign mawg_ctrl_data_in = bram_wrdata_a_1[41:0];
     assign mawg_wave_addr_in = bram_addr_a_0[15:2];
     assign mawg_wave_data_in = bram_wrdata_a_0[15:0];
+
+    reg [63:0] mawg_ctrl_value;
+    always @(posedge FCLK_CLK0_0) begin
+	if(bram_we_a_1[0] == 1)begin
+	    if(bram_addr_a_1[2] == 0) begin
+		mawg_ctrl_value[31:0] = bram_wrdata_a_1;
+	    end else begin
+		mawg_ctrl_value[63:32] = bram_wrdata_a_1;
+	    end
+	end
+    end
+
+    assign mawg_data_num   = mawg_ctrl_value[8:0];
+    assign mawg_repetition = mawg_ctrl_value[31:9];
+    assign mawg_wait_num   = mawg_ctrl_value[63:32];
 
     wire [31:0] mawg_cr;
     wire [31:0] mawg_status;
@@ -866,51 +791,29 @@ module ad5342_iface_top
     assign mawg_cr = gpio_io_o_0;
     assign gpio2_io_i_0 = mawg_status;
 
-    assign mawg_ctrl_addr = mawg_ctrl_addr_in[0:0];
-    assign mawg_ctrl_we = bram_we_a_1[0];
-    assign mawg_ctrl_data = mawg_ctrl_data_in;
-
-    assign mawg_wave_addr = mawg_wave_addr_in[9:0];
-    assign mawg_wave_we = bram_we_a_0[0];
+    assign mawg_wave_addr = mawg_wave_addr_in[8:0];
     assign mawg_wave_data = mawg_wave_data_in;
 
-    assign mawg_0_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h0 ? 1'b1 : 1'b0;
-    assign mawg_1_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h1 ? 1'b1 : 1'b0;
-    assign mawg_2_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h2 ? 1'b1 : 1'b0;
-    assign mawg_3_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h3 ? 1'b1 : 1'b0;
-    assign mawg_4_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h4 ? 1'b1 : 1'b0;
-    assign mawg_5_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h5 ? 1'b1 : 1'b0;
-    assign mawg_6_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h6 ? 1'b1 : 1'b0;
-    assign mawg_7_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h7 ? 1'b1 : 1'b0;
-    assign mawg_8_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h8 ? 1'b1 : 1'b0;
-    assign mawg_9_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'h9 ? 1'b1 : 1'b0;
-    assign mawg_a_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'ha ? 1'b1 : 1'b0;
-    assign mawg_b_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'hb ? 1'b1 : 1'b0;
-    assign mawg_c_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'hc ? 1'b1 : 1'b0;
-    assign mawg_d_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'hd ? 1'b1 : 1'b0;
-    assign mawg_e_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'he ? 1'b1 : 1'b0;
-    assign mawg_f_ctrl_we = mawg_ctrl_addr_in[4:1] == 4'hf ? 1'b1 : 1'b0;
+    assign mawg_0_wave_we = mawg_wave_addr_in[13:9] == 5'd0  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_1_wave_we = mawg_wave_addr_in[13:9] == 5'd1  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_2_wave_we = mawg_wave_addr_in[13:9] == 5'd2  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_3_wave_we = mawg_wave_addr_in[13:9] == 5'd3  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_4_wave_we = mawg_wave_addr_in[13:9] == 5'd4  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_5_wave_we = mawg_wave_addr_in[13:9] == 5'd5  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_6_wave_we = mawg_wave_addr_in[13:9] == 5'd6  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_7_wave_we = mawg_wave_addr_in[13:9] == 5'd7  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_8_wave_we = mawg_wave_addr_in[13:9] == 5'd8  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_9_wave_we = mawg_wave_addr_in[13:9] == 5'd9  ? bram_we_a_0[0] : 1'b0;
+    assign mawg_a_wave_we = mawg_wave_addr_in[13:9] == 5'd10 ? bram_we_a_0[0] : 1'b0;
+    assign mawg_b_wave_we = mawg_wave_addr_in[13:9] == 5'd11 ? bram_we_a_0[0] : 1'b0;
+    assign mawg_c_wave_we = mawg_wave_addr_in[13:9] == 5'd12 ? bram_we_a_0[0] : 1'b0;
+    assign mawg_d_wave_we = mawg_wave_addr_in[13:9] == 5'd13 ? bram_we_a_0[0] : 1'b0;
+    assign mawg_e_wave_we = mawg_wave_addr_in[13:9] == 5'd14 ? bram_we_a_0[0] : 1'b0;
+    assign mawg_f_wave_we = mawg_wave_addr_in[13:9] == 5'd15 ? bram_we_a_0[0] : 1'b0;
 
-    assign mawg_0_wave_we = mawg_wave_addr_in[13:10] == 4'h0 ? 1'b1 : 1'b0;
-    assign mawg_1_wave_we = mawg_wave_addr_in[13:10] == 4'h1 ? 1'b1 : 1'b0;
-    assign mawg_2_wave_we = mawg_wave_addr_in[13:10] == 4'h2 ? 1'b1 : 1'b0;
-    assign mawg_3_wave_we = mawg_wave_addr_in[13:10] == 4'h3 ? 1'b1 : 1'b0;
-    assign mawg_4_wave_we = mawg_wave_addr_in[13:10] == 4'h4 ? 1'b1 : 1'b0;
-    assign mawg_5_wave_we = mawg_wave_addr_in[13:10] == 4'h5 ? 1'b1 : 1'b0;
-    assign mawg_6_wave_we = mawg_wave_addr_in[13:10] == 4'h6 ? 1'b1 : 1'b0;
-    assign mawg_7_wave_we = mawg_wave_addr_in[13:10] == 4'h7 ? 1'b1 : 1'b0;
-    assign mawg_8_wave_we = mawg_wave_addr_in[13:10] == 4'h8 ? 1'b1 : 1'b0;
-    assign mawg_9_wave_we = mawg_wave_addr_in[13:10] == 4'h9 ? 1'b1 : 1'b0;
-    assign mawg_a_wave_we = mawg_wave_addr_in[13:10] == 4'ha ? 1'b1 : 1'b0;
-    assign mawg_b_wave_we = mawg_wave_addr_in[13:10] == 4'hb ? 1'b1 : 1'b0;
-    assign mawg_c_wave_we = mawg_wave_addr_in[13:10] == 4'hc ? 1'b1 : 1'b0;
-    assign mawg_d_wave_we = mawg_wave_addr_in[13:10] == 4'hd ? 1'b1 : 1'b0;
-    assign mawg_e_wave_we = mawg_wave_addr_in[13:10] == 4'he ? 1'b1 : 1'b0;
-    assign mawg_f_wave_we = mawg_wave_addr_in[13:10] == 4'hf ? 1'b1 : 1'b0;
+    assign mawg_10_wave_we = mawg_wave_addr_in[13:9] == 5'd16 ? bram_we_a_0[0] : 1'b0;
 
     assign mawg_force_stop = mawg_cr[1];
-    assign mawg_repetition = mawg_cr[17:2];
-    assign mawg_ctrl_length = mawg_cr[21:18];
 
     reg mawg_cr_0_d;
     always @(posedge AD3542_CLK) begin
@@ -934,8 +837,78 @@ module ad5342_iface_top
     assign mawg_status[13] = mawg_d_busy;
     assign mawg_status[14] = mawg_e_busy;
     assign mawg_status[15] = mawg_f_busy;
+    assign mawg_status[16] = mawg_10_busy;
 
     assign AD3542_CLK = FCLK_CLK0_0;
+
+    dac_data_ila dac_data_ila_i(
+				.clk(AD3542_CLK),
+				.probe0(dac_0_0),
+				.probe1(dac_1_0),
+				.probe2(dac_0_1),
+				.probe3(dac_1_1),
+				.probe4(dac_0_2),
+				.probe5(dac_1_2),
+				.probe6(dac_0_3),
+				.probe7(dac_1_3),
+				.probe8(dac_0_4),
+				.probe9(dac_1_4),
+				.probe10(dac_0_5),
+				.probe11(dac_1_5),
+				.probe12(dac_0_6),
+				.probe13(dac_1_6),
+				.probe14(dac_0_7),
+				.probe15(dac_1_7)
+				);
+
+    sys_ila sys_ila_i(
+		      .clk(AD3542_CLK),
+		      .probe0({sys_reset, debug_mode}), // 2
+		      .probe1({mawg_wave_addr, // 9
+			       mawg_wave_data, // 16
+			       mawg_0_wave_we, // 1
+			       mawg_1_wave_we, // 1
+			       mawg_2_wave_we, // 1
+			       mawg_3_wave_we, // 1
+			       mawg_4_wave_we, // 1
+			       mawg_5_wave_we, // 1
+			       mawg_6_wave_we, // 1
+			       mawg_7_wave_we, // 1
+			       mawg_8_wave_we, // 1
+			       mawg_9_wave_we, // 1
+			       mawg_a_wave_we, // 1
+			       mawg_b_wave_we, // 1
+			       mawg_c_wave_we, // 1
+			       mawg_d_wave_we, // 1
+			       mawg_e_wave_we, // 1
+			       mawg_f_wave_we, // 1
+			       mawg_10_wave_we // 1
+			       }), // (+ 9 16 17)42
+		      .probe2({mawg_kick, // 1
+			       mawg_force_stop // 1
+			       }), // (+ 1 1)2
+		      .probe3({mawg_data_num, // 9
+			       mawg_repetition, // 23
+			       mawg_wait_num // 32
+			       }), // (+ 9 23 32)64
+		      .probe4({mawg_0_busy, wave_0_valid, wave_0_out}), // (+ 1 1 16)18
+		      .probe5({mawg_1_busy, wave_1_valid, wave_1_out}), // (+ 1 1 16)18
+		      .probe6({mawg_2_busy, wave_2_valid, wave_2_out}), // (+ 1 1 16)18
+		      .probe7({mawg_3_busy, wave_3_valid, wave_3_out}), // (+ 1 1 16)18
+		      .probe8({mawg_4_busy, wave_4_valid, wave_4_out}), // (+ 1 1 16)18
+		      .probe9({mawg_5_busy, wave_5_valid, wave_5_out}), // (+ 1 1 16)18
+		      .probe10({mawg_6_busy, wave_6_valid, wave_6_out}), // (+ 1 1 16)18
+		      .probe11({mawg_7_busy, wave_7_valid, wave_7_out}), // (+ 1 1 16)18
+		      .probe12({mawg_8_busy, wave_8_valid, wave_8_out}), // (+ 1 1 16)18
+		      .probe13({mawg_9_busy, wave_9_valid, wave_9_out}), // (+ 1 1 16)18
+		      .probe14({mawg_a_busy, wave_a_valid, wave_a_out}), // (+ 1 1 16)18
+		      .probe15({mawg_b_busy, wave_b_valid, wave_b_out}), // (+ 1 1 16)18
+		      .probe16({mawg_c_busy, wave_c_valid, wave_c_out}), // (+ 1 1 16)18
+		      .probe17({mawg_d_busy, wave_d_valid, wave_d_out}), // (+ 1 1 16)18
+		      .probe18({mawg_e_busy, wave_e_valid, wave_e_out}), // (+ 1 1 16)18
+		      .probe19({mawg_f_busy, wave_f_valid, wave_f_out}), // (+ 1 1 16)18
+		      .probe20({mawg_10_busy, wave_10_valid, wave_10_out})  // (+ 1 1 16)18
+		      );
 
 endmodule
 

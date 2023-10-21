@@ -18,6 +18,15 @@ set_property PACKAGE_PIN W22 [get_ports {LD[5]}];  # "LD5"
 set_property PACKAGE_PIN U19 [get_ports {LD[6]}];  # "LD6"
 set_property PACKAGE_PIN U14 [get_ports {LD[7]}];  # "LD7"
 
+set_property PACKAGE_PIN Y11  [get_ports {JA[0]}]; # "JA1"
+set_property PACKAGE_PIN AA11 [get_ports {JA[1]}]; # "JA2"
+set_property PACKAGE_PIN Y10  [get_ports {JA[2]}]; # "JA3"
+set_property PACKAGE_PIN AA9  [get_ports {JA[3]}]; # "JA4"
+set_property PACKAGE_PIN AB11 [get_ports {JA[4]}]; # "JA7"
+set_property PACKAGE_PIN AB10 [get_ports {JA[5]}]; # "JA8"
+set_property PACKAGE_PIN AB9  [get_ports {JA[6]}]; # "JA9"
+set_property PACKAGE_PIN AA8  [get_ports {JA[7]}]; # "JA10"
+
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN P18} [get_ports {ad3542_reset_x}];
 
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN B15} [get_ports {ldac_0}];
