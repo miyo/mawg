@@ -150,15 +150,14 @@ module ad5342_iface_top
     always @(posedge AD3542_CLK) begin
 	ad3524_clk_counter <= ad3524_clk_counter + 1;
     end
-    assign FMC_LED = ad3524_clk_counter[23];
 
     ad3542_iface ad3542_iface_i_0
       (
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_0),
-       .dac_1(dac_1_0),
+       .dac_0(dac_1_0),
+       .dac_1(dac_0_0),
 
        .spi_sclk(spi_sclk_0), // MAX 66MHz
        .spi_cs(spi_cs_0),
@@ -173,8 +172,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_1),
-       .dac_1(dac_1_1),
+       .dac_0(dac_1_1),
+       .dac_1(dac_0_1),
 
        .spi_sclk(spi_sclk_1), // MAX 66MHz
        .spi_cs(spi_cs_1),
@@ -189,8 +188,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_2),
-       .dac_1(dac_1_2),
+       .dac_0(dac_1_2),
+       .dac_1(dac_0_2),
 
        .spi_sclk(spi_sclk_2), // MAX 66MHz
        .spi_cs(spi_cs_2),
@@ -205,8 +204,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_3),
-       .dac_1(dac_1_3),
+       .dac_0(dac_1_3),
+       .dac_1(dac_0_3),
 
        .spi_sclk(spi_sclk_3), // MAX 66MHz
        .spi_cs(spi_cs_3),
@@ -221,8 +220,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_4),
-       .dac_1(dac_1_4),
+       .dac_0(dac_1_4),
+       .dac_1(dac_0_4),
 
        .spi_sclk(spi_sclk_4), // MAX 66MHz
        .spi_cs(spi_cs_4),
@@ -237,8 +236,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_5),
-       .dac_1(dac_1_5),
+       .dac_0(dac_1_5),
+       .dac_1(dac_0_5),
 
        .spi_sclk(spi_sclk_5), // MAX 66MHz
        .spi_cs(spi_cs_5),
@@ -253,8 +252,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_6),
-       .dac_1(dac_1_6),
+       .dac_0(dac_1_6),
+       .dac_1(dac_0_6),
 
        .spi_sclk(spi_sclk_6), // MAX 66MHz
        .spi_cs(spi_cs_6),
@@ -269,8 +268,8 @@ module ad5342_iface_top
        .clk(AD3542_CLK), // MAX 132MHz
        .reset(sys_reset),
 
-       .dac_0(dac_0_7),
-       .dac_1(dac_1_7),
+       .dac_0(dac_1_7),
+       .dac_1(dac_0_7),
 
        .spi_sclk(spi_sclk_7), // MAX 66MHz
        .spi_cs(spi_cs_7),
@@ -840,6 +839,10 @@ module ad5342_iface_top
     assign mawg_status[16] = mawg_10_busy;
 
     assign AD3542_CLK = FCLK_CLK0_0;
+    
+    assign FMC_LED = sys_reset == 1 ? 1'b0 :
+                     mawg_0_busy == 1 ? ad3524_clk_counter[23] :
+                     ad3524_clk_counter[25];
 
     dac_data_ila dac_data_ila_i(
 				.clk(AD3542_CLK),
