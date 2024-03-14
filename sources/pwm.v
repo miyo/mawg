@@ -21,12 +21,13 @@ module pwm#(
     reg update_d;
     reg [WAVE_LEN_WIDTH-1:0] pulse_width_r;
 
-    initial begin
-	$display("WAVE_LEN          = %d", WAVE_LEN);
-	$display("WAVE_WEIGHT       = %d", WAVE_WEIGHT);
-	$display("WAVE_LEN_WIDTH    = %d", WAVE_LEN_WIDTH);
-	$display("WAVE_WEIGHT_WIDTH = %d", WAVE_WEIGHT_WIDTH);
-    end
+    // for checking parameters
+    // initial begin
+    // 	$display("WAVE_LEN          = %d", WAVE_LEN);
+    // 	$display("WAVE_WEIGHT       = %d", WAVE_WEIGHT);
+    // 	$display("WAVE_LEN_WIDTH    = %d", WAVE_LEN_WIDTH);
+    // 	$display("WAVE_WEIGHT_WIDTH = %d", WAVE_WEIGHT_WIDTH);
+    // end
 
     always @(posedge clk) begin
 	if (reset == 1) begin
