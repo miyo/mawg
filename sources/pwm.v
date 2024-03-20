@@ -2,8 +2,7 @@
 
 module pwm#(
 	    parameter WAVE_WEIGHT=1024, // common clock weight
-	    parameter WAVE_LEN_WIDTH = 11, // wave and pulse width
-	    parameter WAVE_WEIGHT_WIDTH = $clog2(WAVE_WEIGHT + 1)
+	    parameter WAVE_LEN_WIDTH = 11 // wave and pulse width
 	    )
     (
      input wire clk,
@@ -33,14 +32,6 @@ module pwm#(
     assign pulse_width_out = pulse_width_r;
     assign active_high_out = active_high_r;
 
-    // for checking parameters
-    // initial begin
-    // 	$display("WAVE_LEN          = %d", WAVE_LEN);
-    // 	$display("WAVE_WEIGHT       = %d", WAVE_WEIGHT);
-    // 	$display("WAVE_LEN_WIDTH    = %d", WAVE_LEN_WIDTH);
-    // 	$display("WAVE_WEIGHT_WIDTH = %d", WAVE_WEIGHT_WIDTH);
-    // end
-
     // preserver parameters into internal registers at `update` rising
     always @(posedge clk) begin
 	if (reset == 1) begin
@@ -57,6 +48,7 @@ module pwm#(
 
     // common clock weight counter
     // to reduce reousrce usage, move this block outside of this module
+    localparam WAVE_WEIGHT_WIDTH = $clog2(WAVE_WEIGHT + 2);
     reg [WAVE_WEIGHT_WIDTH-1:0] weight_counter;
     reg pulse_update;
     always @(posedge clk) begin
@@ -65,13 +57,18 @@ module pwm#(
 	    pulse_update <= 1'b0;
 	end else begin
 
-	    if(weight_counter == WAVE_WEIGHT - 1) begin
+	    if(weight_counter == (WAVE_WEIGHT+1) - 1) begin
 		weight_counter <= 0;
-		pulse_update <= 1'b1;
 	    end else begin
 		weight_counter <= weight_counter + 1;
+	    end
+
+	    if(weight_counter == 0) begin
+		pulse_update <= 1'b1;
+	    end else begin
 		pulse_update <= 1'b0;
 	    end
+
 	end
     end
 
