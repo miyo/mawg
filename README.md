@@ -42,6 +42,8 @@ pwm.v is a simple PWM implementation.
 
 This module generate PWM output from `wave_length` and `pulse_width`. The `wave_length` corresponds to total wave length and the `pulse_width` corresponds to the length pulse active. The polarity of active period is deffined by `active_high`. In case that `wave_length`, `pulse_width`, and `active_high` are `'d10`, `'d2`, and `'b1`; the PWM module generates 20% duty active-high output.
 The parameter `WAVE_LEN_WIDTH` should be enough bit-width for `wave_length` and `pulse_width`.
+The input value of `wave_length`, `pulse_width`, and `active-high` is stored into the internal registers at `update` rising.
 
 The parameter `WAVE_WEIGHT` corresponds to common weight for `wave_length` and `pulse_width`. The PWM outputs will be `WAVE_WEIGHT+1` times slower than given clock period.
 
+![pwm behavior](figures/pwm_behavior.png)

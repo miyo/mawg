@@ -83,6 +83,7 @@ module pwm#(
 
 	    if(enable == 1'b0) begin // disabled module
 		wave_counter <= 0;
+		pwm_pulse <= ~active_high_r;
 	    end else begin
 		if(pulse_update == 1'b1) begin // update at pulse_update is asserted
 		    if(wave_counter < pulse_width_r) begin // active or non-active
